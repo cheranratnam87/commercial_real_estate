@@ -1,0 +1,5 @@
+folium
+fastkml
+shapely
+streamlit-folium
+requests
