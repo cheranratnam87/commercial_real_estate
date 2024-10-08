@@ -1,3 +1,12 @@
+import folium
+from fastkml import kml
+from shapely.geometry import shape
+import streamlit as st
+from streamlit_folium import st_folium
+import requests
+import pandas as pd
+import plotly.express as px
+
 # Custom CSS to reduce padding and space between visuals (improved)
 st.markdown("""
     <style>
@@ -80,30 +89,6 @@ def categorize_naics(label):
         return 'All Sectors'
     else:
         return 'Other'
-
-# NAICS Categorization Section with Broader Categories (New Visual)
-st.subheader("Categorization of Businesses by Broader Sectors")
-
-# Apply categorization to the 'NAICS2017_LABEL' column
-naics_data['Category_Broad'] = naics_data['NAICS2017_LABEL'].apply(categorize_naics)
-
-# Show count of businesses in each broad category
-broad_category_count = naics_data['Category_Broad'].value_counts().reset_index()
-broad_category_count.columns = ['Broad Category', 'Count']
-
-# Create a bar chart with category on X and count on Y
-fig5 = px.bar(
-    broad_category_count,
-    x='Broad Category',
-    y='Count',  # Show count on y-axis
-    labels={'Count': 'Number of Businesses', 'Broad Category': 'Business Category'},
-    title="Distribution of Businesses by Broad Category",
-    orientation='v'  # Set orientation to vertical
-)
-
-# Display the plot
-st.plotly_chart(fig5)
-
 
 # Streamlit title and description
 st.title("Business and Healthcare Visualization Around 4901 Arroyo Trail, McKinney, Texas")
@@ -208,11 +193,7 @@ for placemark in placemarks:
 # Display the map in the Streamlit app using st_folium
 st_folium(map_visualization, width=700, height=500)
 
-
-### NAICS Categorization Section (Second Visual) ###
-### NAICS Categorization Section (Second Visual) ###
-### NAICS Categorization Section (Second Visual) ###
-### NAICS Categorization Section (Second Visual) ###
+# Load the NAICS data
 @st.cache_data
 def load_data(url):
     return pd.read_csv(url)
@@ -220,25 +201,28 @@ def load_data(url):
 naics_url = "https://raw.githubusercontent.com/cheranratnam87/commercial_real_estate/refs/heads/main/filtered_data.csv"
 naics_data = load_data(naics_url)
 
-# Show all categories including 'Other'
-category_count = naics_data['NAICS2017_LABEL'].value_counts().reset_index()
-category_count.columns = ['Category', 'Count']
+# NAICS Categorization Section with Broader Categories (New Visual)
+st.subheader("Categorization of Businesses by Broader Sectors")
 
-# Create a horizontal bar chart of all categories including 'Other'
-st.subheader("75070 zip Categorization of Businesses (Including All Categories)")
-fig4 = px.bar(
-    category_count,
-    x='Count',
-    y='Category',  # Swap x and y to make it horizontal
-    labels={'Count': 'Number of Businesses', 'Category': 'Business Category'},
-    title="Distribution of Businesses by Category (Including All Categories)",
-    orientation='h'  # Set orientation to horizontal
+# Apply categorization to the 'NAICS2017_LABEL' column
+naics_data['Category_Broad'] = naics_data['NAICS2017_LABEL'].apply(categorize_naics)
+
+# Show count of businesses in each broad category
+broad_category_count = naics_data['Category_Broad'].value_counts().reset_index()
+broad_category_count.columns = ['Broad Category', 'Count']
+
+# Create a bar chart with category on X and count on Y
+fig5 = px.bar(
+    broad_category_count,
+    x='Broad Category',
+    y='Count',  # Show count on y-axis
+    labels={'Count': 'Number of Businesses', 'Broad Category': 'Business Category'},
+    title="Distribution of Businesses by Broad Category",
+    orientation='v'  # Set orientation to vertical
 )
 
 # Display the plot
-st.plotly_chart(fig4)
-
-
+st.plotly_chart(fig5)
 
 ### Demographic Data Section (Third Visual) ###
 # Creating the demographic DataFrame
