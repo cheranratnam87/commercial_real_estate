@@ -6,7 +6,7 @@ from streamlit_folium import st_folium
 import requests
 
 # URL to your KML file
-kml_url = "https://raw.githubusercontent.com/cheranratnam87/commercial_real_estate/refs/heads/main/4901%20Arroyo%20Trail%20Comps.kml?token=GHSAT0AAAAAACXBZ732CQNPEJFILZWKNDZ2ZYEWMWQ"
+kml_url = "https://raw.githubusercontent.com/cheranratnam87/commercial_real_estate/refs/heads/main/4901%20Arroyo%20Trail%20Comps.kml"
 
 # Streamlit title and description
 st.title("Business and Healthcare Visualization Around 4901 Arroyo Trail, McKinney, Texas")
