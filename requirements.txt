@@ -5,4 +5,8 @@ shapely
 streamlit-folium
 pandas
 plotly
+<<<<<<< HEAD
 requests
+=======
+requests
+>>>>>>> 3ee8453a13266ac5726fbacd1cba66db6885ab0c
