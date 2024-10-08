@@ -203,7 +203,7 @@ naics_url = "https://raw.githubusercontent.com/cheranratnam87/commercial_real_es
 naics_data = load_data(naics_url)
 
 # NAICS Categorization Section with Broader Categories (New Visual)
-st.subheader("Categorization of Businesses by Broader Sectors")
+st.subheader("Categorization of Businesses by Broader Sectors based on 75070 zipcode")
 
 # Apply categorization to the 'NAICS2017_LABEL' column
 naics_data['Category_Broad'] = naics_data['NAICS2017_LABEL'].apply(categorize_naics)
