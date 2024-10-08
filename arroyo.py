@@ -38,7 +38,7 @@ show_other_listings = st.button("Show listings under 'Other'")
 
 if show_other_listings:
     st.subheader("Businesses Listed Under 'Other'")
-    other_listings = naics_data[naics_data['NAICS2017_LABEL'] == 'Other']
+    other_listings = naics_data[naics2017_LABEL'] == 'Other']
     st.dataframe(other_listings)
 
 # Create a bar chart of categories including "Other"
@@ -51,6 +51,7 @@ fig4 = px.bar(
     title="Distribution of Businesses by Category (Including 'Other')"
 )
 st.plotly_chart(fig4)
+
 
 ### Map Visualization Section (Second Visual) ###
 # URL to your KML file
