@@ -16,7 +16,10 @@ st.markdown("""
         padding-left: 0rem;
         padding-right: 0rem;
     }
-    .css-1v0mbdj { margin-bottom: 0rem; }  /* Reduces margin at bottom of elements */
+    .element-container { 
+        margin-bottom: 0rem !important; 
+        padding-bottom: 0rem !important;
+    } /* Removes padding/margins between Streamlit elements */
     </style>
     """, unsafe_allow_html=True)
 
