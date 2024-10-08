@@ -139,35 +139,31 @@ def categorize_naics(label):
 
     healthcare_keywords = ['health', 'dental', 'dentists', 'medical', 'hospital', 'clinic', 'nursing', 'chiropractors', 'optometrists', 'physicians', 'therapists', 'diagnostic']
     financial_keywords = ['finance', 'lending', 'credit', 'bank', 'insurance', 'investment', 'securities', 'brokerage', 'accountants','mortgage', 'tax','portfolio', 'intermediation']
-    # Add other keywords as defined previously...
+    # ... (add other keywords as defined previously)
     
     if any(keyword in label for keyword in healthcare_keywords):
         return 'Healthcare'
     elif any(keyword in label for keyword in financial_keywords):
         return 'Financial Services'
-    # Add other categorization conditions...
+    # ... (add other categorization conditions)
     else:
         return 'Other'
 
 naics_data['Category'] = naics_data['NAICS2017_LABEL'].apply(categorize_naics)
 
-# Filter out the "Other" category
-naics_data_filtered = naics_data[naics_data['Category'] != 'Other']
-
-# Create a bar chart of categories (excluding "Other")
-category_count = naics_data_filtered['Category'].value_counts().reset_index()
+# Create a bar chart of categories
+category_count = naics_data['Category'].value_counts().reset_index()
 category_count.columns = ['Category', 'Count']
 
-st.subheader("NAICS Categorization of Businesses (Excluding 'Other')")
+st.subheader("NAICS Categorization of Businesses")
 fig4 = px.bar(
     category_count,
     x='Category',
     y='Count',
     labels={'Count': 'Number of Businesses', 'Category': 'Business Category'},
-    title="Distribution of Businesses by Category (Excluding 'Other')"
+    title="Distribution of Businesses by Category"
 )
 st.plotly_chart(fig4)
-
 
 ### Demographic Data Section ###
 # Creating the demographic DataFrame
