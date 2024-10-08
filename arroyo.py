@@ -22,7 +22,74 @@ st.markdown("""
     }
     </style>
     """, unsafe_allow_html=True)
-
+# Define the categorize_naics function here
+def categorize_naics(label):
+    # Convert label to lowercase for easier matching
+    label = label.lower()
+    
+    # Define broader keyword lists for categorizing
+    healthcare_keywords = ['health', 'dental', 'dentists', 'medical', 'hospital', 'clinic', 'nursing', 'chiropractors', 'optometrists', 'physicians', 'therapists', 'diagnostic']
+    financial_keywords = ['finance', 'lending', 'credit', 'bank', 'insurance', 'investment', 'securities', 'brokerage', 'accountants','mortgage', 'tax','portfolio', 'intermediation']
+    food_keywords = ['food', 'restaurant', 'eating', 'cafe', 'catering', 'bakery', 'beverage', 'snack', 'caterers']
+    automotive_keywords = ['auto', 'car', 'vehicle', 'motor', 'automobile', 'garage', 'tire', 'parts']
+    manufacturing_keywords = ['manufacturing', 'factory', 'production', 'assembly', 'printing']
+    retail_keywords = ['retail', 'store', 'shop', 'outlet', 'mall', 'center', 'warehouse', 'home centers', 'supercenters', 'gasoline']
+    construction_keywords = ['construction', 'building', 'contractor', 'remodeler', 'oil and gas']
+    wholesale_keywords = ['wholesale', 'distributor', 'merchant']
+    transportation_keywords = ['transportation', 'logistics', 'trucking', 'freight', 'warehousing']
+    information_keywords = ['publishing', 'software', 'telecom', 'data processing', 'information', 'motion picture', 'sound recording']
+    real_estate_keywords = ['real estate', 'leasing', 'property', 'lessors', 'rental', 'warehouses']
+    education_keywords = ['school', 'education', 'tutoring', 'training', 'instruction']
+    entertainment_keywords = ['arts', 'entertainment', 'recreation', 'sports', 'club', 'golf', 'independent artist', 'writers', 'performers']
+    accommodation_keywords = ['hotel', 'motel', 'accommodation', 'lodging', 'caterers']
+    repair_keywords = ['repair', 'maintenance', 'car wash', 'laundry', 'janitorial']
+    personal_services_keywords = ['personal care', 'salon', 'barber', 'weight reducing', 'landscaping', 'photographic', 'veterinary']
+    social_assistance_keywords = ['social assistance', 'family services', 'elderly', 'grantmaking', 'civic', 'professional organizations', 'religious']
+    professional_services_keywords = ['legal', 'lawyer', 'accounting', 'consulting', 'design', 'scientific', 'technical', 'management', 'advertising', 'security', 'administrative', 'waste management', 'business support', 'employment', 'photography']
+    
+    # Match each label against keywords for categorization
+    if any(keyword in label for keyword in healthcare_keywords):
+        return 'Healthcare'
+    elif any(keyword in label for keyword in financial_keywords):
+        return 'Financial Services'
+    elif any(keyword in label for keyword in food_keywords):
+        return 'Food Services and Accommodation'
+    elif any(keyword in label for keyword in automotive_keywords):
+        return 'Automotive Services'
+    elif any keyword in label for keyword in manufacturing_keywords:
+        return 'Manufacturing'
+    elif any keyword in label for keyword in retail_keywords:
+        return 'Retail Trade'
+    elif any keyword in label for keyword in construction_keywords:
+        return 'Construction'
+    elif any keyword in label for keyword in wholesale_keywords:
+        return 'Wholesale Trade'
+    elif any keyword in label for keyword in transportation_keywords:
+        return 'Transportation and Warehousing'
+    elif any keyword in label for keyword in information_keywords:
+        return 'Information Technology and Media'
+    elif any keyword in label for keyword in real_estate_keywords:
+        return 'Real Estate and Leasing'
+    elif any keyword in label for keyword in education_keywords:
+        return 'Educational Services'
+    elif any keyword in label for keyword in entertainment_keywords:
+        return 'Arts, Entertainment, and Recreation'
+    elif any keyword in label for keyword in accommodation_keywords:
+        return 'Accommodation and Food Services'
+    elif any keyword in label for keyword in repair_keywords:
+        return 'Repair and Maintenance'
+    elif any keyword in label for keyword in personal_services_keywords:
+        return 'Personal and Laundry Services'
+    elif any keyword in label for keyword in social_assistance_keywords:
+        return 'Social Assistance and Organizations'
+    elif any keyword in label for keyword in professional_services_keywords:
+        return 'Professional, Scientific, and Technical Services'
+    # 'Total for all sectors' should be categorized separately if needed
+    elif 'total for all sectors' in label:
+        return 'All Sectors'
+    else:
+        return 'Other'
+    
 # Streamlit title and description
 st.title("Business and Healthcare Visualization Around 4901 Arroyo Trail, McKinney, Texas")
 st.write("This dashboard visualizes businesses, healthcare facilities, and other locations around 4901 Arroyo Trail using categorized icons, along with NAICS categorization and demographic insights.")
@@ -156,6 +223,28 @@ fig4 = px.bar(
 # Display the plot
 st.plotly_chart(fig4)
 
+### NAICS Categorization with Broader Categories (Second Visual) ###
+
+# Apply categorization to the 'NAICS2017_LABEL' column
+naics_data['Category_Broad'] = naics_data['NAICS2017_LABEL'].apply(categorize_naics)
+
+# Show count of businesses in each broad category
+broad_category_count = naics_data['Category_Broad'].value_counts().reset_index()
+broad_category_count.columns = ['Broad Category', 'Count']
+
+# Create a horizontal bar chart for broad categories
+st.subheader("Business Categorization by Broad Sectors")
+fig5 = px.bar(
+    broad_category_count,
+    x='Count',
+    y='Broad Category',  # Swap x and y to make it horizontal
+    labels={'Count': 'Number of Businesses', 'Broad Category': 'Business Sector'},
+    title="Distribution of Businesses by Broad Category",
+    orientation='h'  # Set orientation to horizontal
+)
+
+# Display the plot
+st.plotly_chart(fig5)
 
 
 ### Demographic Data Section (Third Visual) ###
