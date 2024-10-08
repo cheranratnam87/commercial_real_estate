@@ -151,8 +151,6 @@ fig4 = px.bar(
 )
 st.plotly_chart(fig4)
 
-
-
 ### Demographic Data Section (Third Visual) ###
 # Creating the demographic DataFrame
 data = {
