@@ -133,49 +133,26 @@ def load_data(url):
 naics_url = "https://raw.githubusercontent.com/cheranratnam87/commercial_real_estate/refs/heads/main/filtered_data.csv"
 naics_data = load_data(naics_url)
 
-# Toggle button to include/exclude "Other" category
-show_other = st.checkbox("Include 'Other' category in NAICS visualization", value=False)
-
-# Filter out or include 'Other' based on checkbox
-if not show_other:
-    naics_data = naics_data[naics_data['NAICS2017_LABEL'] != 'Other']
-
-# Adding a selectbox to filter by category
-category_options = naics_data['NAICS2017_LABEL'].unique().tolist()
-selected_category = st.selectbox("Select a NAICS Category to filter", category_options)
-
-# Filter the NAICS data by the selected category
-filtered_naics_data = naics_data[naics_data['NAICS2017_LABEL'] == selected_category]
-
-# Categorize NAICS labels
-def categorize_naics(label):
-    label = label.lower()
-
-    healthcare_keywords = ['health', 'dental', 'dentists', 'medical', 'hospital', 'clinic', 'nursing', 'chiropractors', 'optometrists', 'physicians', 'therapists', 'diagnostic']
-    financial_keywords = ['finance', 'lending', 'credit', 'bank', 'insurance', 'investment', 'securities', 'brokerage', 'accountants','mortgage', 'tax','portfolio', 'intermediation']
-    # Add other keywords as defined previously...
-    
-    if any(keyword in label for keyword in healthcare_keywords):
-        return 'Healthcare'
-    elif any(keyword in label for keyword in financial_keywords):
-        return 'Financial Services'
-    # Add other categorization conditions...
-    else:
-        return 'Other'
-
-naics_data['Category'] = naics_data['NAICS2017_LABEL'].apply(categorize_naics)
-
-# Create a bar chart of categories
-category_count = naics_data['Category'].value_counts().reset_index()
+# Show all categories including 'Other'
+category_count = naics_data['NAICS2017_LABEL'].value_counts().reset_index()
 category_count.columns = ['Category', 'Count']
 
-st.subheader("NAICS Categorization of Businesses")
+# Button to show "Other" listings
+show_other_listings = st.button("Show listings under 'Other'")
+
+if show_other_listings:
+    st.subheader("Businesses Listed Under 'Other'")
+    other_listings = naics_data[naics_data['NAICS2017_LABEL'] == 'Other']
+    st.dataframe(other_listings)
+
+# Create a bar chart of categories including "Other"
+st.subheader("NAICS Categorization of Businesses (Including 'Other')")
 fig4 = px.bar(
     category_count,
     x='Category',
     y='Count',
     labels={'Count': 'Number of Businesses', 'Category': 'Business Category'},
-    title="Distribution of Businesses by Category"
+    title="Distribution of Businesses by Category (Including 'Other')"
 )
 st.plotly_chart(fig4)
 
