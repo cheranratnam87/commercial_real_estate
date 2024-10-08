@@ -22,7 +22,7 @@ st.title("Business and Healthcare Visualization Around 4901 Arroyo Trail, McKinn
 st.write("This dashboard visualizes businesses, healthcare facilities, and other locations around 4901 Arroyo Trail using categorized icons, along with NAICS categorization and demographic insights.")
 
 ### NAICS Categorization Section (First Visual) ###
-@st.cache
+@st.cache_data
 def load_data(url):
     return pd.read_csv(url)
 
