@@ -3,3 +3,4 @@ fastkml
 shapely
 streamlit-folium
 requests
+setuptools
