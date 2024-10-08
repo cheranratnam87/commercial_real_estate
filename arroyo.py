@@ -109,3 +109,70 @@ for placemark in placemarks:
 
 # Display the map in the Streamlit app using st_folium
 st_folium(map_visualization, width=700, height=500)
+
+import streamlit as st
+import pandas as pd
+import plotly.express as px
+
+# Creating the demographic DataFrame
+data = {
+    "Radius": ["1 Mile", "3 Mile", "5 Mile"],
+    "2024 Population": [17525, 137712, 349375],
+    "2029 Projected Population": [21613, 169353, 426989],
+    "Growth 2024-2029 (%)": [23.33, 22.98, 22.22],
+    "Median Age": [36.8, 37.1, 38.3],
+    "Average Age": [35.4, 35.4, 36.7],
+    "Average Household Income ($)": [139537, 160307, 156846],
+    "Median Household Income ($)": [110234, 130858, 130229],
+    "Median Home Value ($)": [421909, 474010, 442683],
+    "Households 2024": [6232, 45995, 118665],
+    "Households 2029": [7711, 56666, 145322],
+    "Household Growth 2024-2029 (%)": [23.73, 23.2, 22.46],
+    "Owner Occupied (%)": [59.56, 67.86, 67.45],
+    "Renter Occupied (%)": [40.44, 32.14, 32.55]
+}
+
+# Convert to DataFrame
+demographic_df = pd.DataFrame(data)
+
+# Display the DataFrame as a table in Streamlit
+st.subheader("Demographic Data (2024-2029)")
+st.dataframe(demographic_df)
+
+# Create an interactive line plot for Population Growth
+st.subheader("Projected Population Growth (2024-2029)")
+fig1 = px.line(
+    demographic_df,
+    x="Radius",
+    y=["2024 Population", "2029 Projected Population"],
+    labels={"value": "Population", "variable": "Year"},
+    title="Projected Population Growth in Different Radii"
+)
+fig1.update_layout(legend_title_text="Population")
+st.plotly_chart(fig1)
+
+# Create an interactive bar plot for Household Growth
+st.subheader("Household Growth (2024-2029)")
+fig2 = px.bar(
+    demographic_df,
+    x="Radius",
+    y=["Households 2024", "Households 2029"],
+    barmode="group",
+    labels={"value": "Households", "variable": "Year"},
+    title="Household Growth in Different Radii"
+)
+fig2.update_layout(legend_title_text="Households")
+st.plotly_chart(fig2)
+
+# Create an interactive bar plot for Median and Average Household Income
+st.subheader("Household Income Levels (2024)")
+fig3 = px.bar(
+    demographic_df,
+    x="Radius",
+    y=["Median Household Income ($)", "Average Household Income ($)"],
+    barmode="group",
+    labels={"value": "Income ($)", "variable": "Income Type"},
+    title="Household Income Levels in Different Radii"
+)
+fig3.update_layout(legend_title_text="Income Type")
+st.plotly_chart(fig3)
