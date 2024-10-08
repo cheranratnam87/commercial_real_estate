@@ -130,6 +130,7 @@ st_folium(map_visualization, width=700, height=500)
 ### NAICS Categorization Section (Second Visual) ###
 ### NAICS Categorization Section (Second Visual) ###
 ### NAICS Categorization Section (Second Visual) ###
+### NAICS Categorization Section (Second Visual) ###
 @st.cache_data
 def load_data(url):
     return pd.read_csv(url)
@@ -141,21 +142,20 @@ naics_data = load_data(naics_url)
 category_count = naics_data['NAICS2017_LABEL'].value_counts().reset_index()
 category_count.columns = ['Category', 'Count']
 
-# Create a bar chart of all categories including 'Other'
+# Create a horizontal bar chart of all categories including 'Other'
 st.subheader("NAICS Categorization of Businesses (Including All Categories)")
 fig4 = px.bar(
     category_count,
-    x='Category',
-    y='Count',
+    x='Count',
+    y='Category',  # Swap x and y to make it horizontal
     labels={'Count': 'Number of Businesses', 'Category': 'Business Category'},
-    title="Distribution of Businesses by Category (Including All Categories)"
+    title="Distribution of Businesses by Category (Including All Categories)",
+    orientation='h'  # Set orientation to horizontal
 )
-
-# Rotate x-axis labels vertically
-fig4.update_xaxes(tickangle=90)
 
 # Display the plot
 st.plotly_chart(fig4)
+
 
 
 ### Demographic Data Section (Third Visual) ###
