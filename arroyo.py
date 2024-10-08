@@ -7,13 +7,16 @@ import requests
 import pandas as pd
 import plotly.express as px
 
-# Custom CSS to reduce padding and space
+# Custom CSS to reduce padding and space between visuals
 st.markdown("""
     <style>
     div.block-container {
         padding-top: 0rem;
         padding-bottom: 0rem;
+        padding-left: 0rem;
+        padding-right: 0rem;
     }
+    .css-1v0mbdj { margin-bottom: 0rem; }  /* Reduces margin at bottom of elements */
     </style>
     """, unsafe_allow_html=True)
 
