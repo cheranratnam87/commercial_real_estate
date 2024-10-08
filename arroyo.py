@@ -1,11 +1,12 @@
+import streamlit as st
 import folium
 from fastkml import kml
 from shapely.geometry import shape
-import streamlit as st
 from streamlit_folium import st_folium
 import requests
 import pandas as pd
 import plotly.express as px
+
 
 # Custom CSS to reduce padding and space between visuals (improved)
 st.markdown("""
