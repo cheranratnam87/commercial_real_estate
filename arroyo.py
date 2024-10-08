@@ -4,6 +4,8 @@ from shapely.geometry import shape
 import streamlit as st
 from streamlit_folium import st_folium
 import requests
+import pandas as pd
+import plotly.express as px
 
 # URL to your KML file
 kml_url = "https://raw.githubusercontent.com/cheranratnam87/commercial_real_estate/refs/heads/main/4901%20Arroyo%20Trail%20Comps.kml"
@@ -110,9 +112,8 @@ for placemark in placemarks:
 # Display the map in the Streamlit app using st_folium
 st_folium(map_visualization, width=700, height=500)
 
-import streamlit as st
-import pandas as pd
-import plotly.express as px
+# Adding some space reduction between visuals
+st.markdown("<style>div.block-container{padding-top:1rem;padding-bottom:1rem;}</style>", unsafe_allow_html=True)
 
 # Creating the demographic DataFrame
 data = {
@@ -176,3 +177,43 @@ fig3 = px.bar(
 )
 fig3.update_layout(legend_title_text="Income Type")
 st.plotly_chart(fig3)
+
+# Fetch and visualize NAICS data
+@st.cache
+def load_data(url):
+    return pd.read_csv(url)
+
+naics_url = "https://raw.githubusercontent.com/cheranratnam87/commercial_real_estate/refs/heads/main/filtered_data.csv"
+naics_data = load_data(naics_url)
+
+# Categorize NAICS labels
+def categorize_naics(label):
+    label = label.lower()
+
+    healthcare_keywords = ['health', 'dental', 'dentists', 'medical', 'hospital', 'clinic', 'nursing', 'chiropractors', 'optometrists', 'physicians', 'therapists', 'diagnostic']
+    financial_keywords = ['finance', 'lending', 'credit', 'bank', 'insurance', 'investment', 'securities', 'brokerage', 'accountants','mortgage', 'tax','portfolio', 'intermediation']
+    # ... (add other keywords as defined previously)
+    
+    if any(keyword in label for keyword in healthcare_keywords):
+        return 'Healthcare'
+    elif any(keyword in label for keyword in financial_keywords):
+        return 'Financial Services'
+    # ... (add other categorization conditions)
+    else:
+        return 'Other'
+
+naics_data['Category'] = naics_data['NAICS2017_LABEL'].apply(categorize_naics)
+
+# Create a bar chart of categories
+category_count = naics_data['Category'].value_counts().reset_index()
+category_count.columns = ['Category', 'Count']
+
+st.subheader("NAICS Categorization of Businesses")
+fig4 = px.bar(
+    category_count,
+    x='Category',
+    y='Count',
+    labels={'Count': 'Number of Businesses', 'Category': 'Business Category'},
+    title="Distribution of Businesses by Category"
+)
+st.plotly_chart(fig4)
