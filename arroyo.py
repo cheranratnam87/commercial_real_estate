@@ -4,13 +4,57 @@ from shapely.geometry import shape
 import streamlit as st
 from streamlit_folium import st_folium
 import requests
+import pandas as pd
+import plotly.express as px
 
-# URL to your KML file
-kml_url = "https://raw.githubusercontent.com/cheranratnam87/commercial_real_estate/refs/heads/main/4901%20Arroyo%20Trail%20Comps.kml"
+# Custom CSS to reduce padding and space
+st.markdown("""
+    <style>
+    div.block-container {
+        padding-top: 0rem;
+        padding-bottom: 0rem;
+    }
+    </style>
+    """, unsafe_allow_html=True)
 
 # Streamlit title and description
 st.title("Business and Healthcare Visualization Around 4901 Arroyo Trail, McKinney, Texas")
-st.write("This map visualizes businesses, healthcare facilities, and other locations around 4901 Arroyo Trail using categorized icons.")
+st.write("This dashboard visualizes businesses, healthcare facilities, and other locations around 4901 Arroyo Trail using categorized icons, along with NAICS categorization and demographic insights.")
+
+### NAICS Categorization Section (First Visual) ###
+@st.cache
+def load_data(url):
+    return pd.read_csv(url)
+
+naics_url = "https://raw.githubusercontent.com/cheranratnam87/commercial_real_estate/refs/heads/main/filtered_data.csv"
+naics_data = load_data(naics_url)
+
+# Show all categories including 'Other'
+category_count = naics_data['NAICS2017_LABEL'].value_counts().reset_index()
+category_count.columns = ['Category', 'Count']
+
+# Button to show "Other" listings
+show_other_listings = st.button("Show listings under 'Other'")
+
+if show_other_listings:
+    st.subheader("Businesses Listed Under 'Other'")
+    other_listings = naics_data[naics_data['NAICS2017_LABEL'] == 'Other']
+    st.dataframe(other_listings)
+
+# Create a bar chart of categories including "Other"
+st.subheader("NAICS Categorization of Businesses (Including 'Other')")
+fig4 = px.bar(
+    category_count,
+    x='Category',
+    y='Count',
+    labels={'Count': 'Number of Businesses', 'Category': 'Business Category'},
+    title="Distribution of Businesses by Category (Including 'Other')"
+)
+st.plotly_chart(fig4)
+
+### Map Visualization Section (Second Visual) ###
+# URL to your KML file
+kml_url = "https://raw.githubusercontent.com/cheranratnam87/commercial_real_estate/refs/heads/main/4901%20Arroyo%20Trail%20Comps.kml"
 
 # Fetch the KML file content from the URL
 response = requests.get(kml_url)
@@ -110,3 +154,66 @@ for placemark in placemarks:
 # Display the map in the Streamlit app using st_folium
 st_folium(map_visualization, width=700, height=500)
 
+### Demographic Data Section (Third Visual) ###
+# Creating the demographic DataFrame
+data = {
+    "Radius": ["1 Mile", "3 Mile", "5 Mile"],
+    "2024 Population": [17525, 137712, 349375],
+    "2029 Projected Population": [21613, 169353, 426989],
+    "Growth 2024-2029 (%)": [23.33, 22.98, 22.22],
+    "Median Age": [36.8, 37.1, 38.3],
+    "Average Age": [35.4, 35.4, 36.7],
+    "Average Household Income ($)": [139537, 160307, 156846],
+    "Median Household Income ($)": [110234, 130858, 130229],
+    "Median Home Value ($)": [421909, 474010, 442683],
+    "Households 2024": [6232, 45995, 118665],
+    "Households 2029": [7711, 56666, 145322],
+    "Household Growth 2024-2029 (%)": [23.73, 23.2, 22.46],
+    "Owner Occupied (%)": [59.56, 67.86, 67.45],
+    "Renter Occupied (%)": [40.44, 32.14, 32.55]
+}
+
+# Convert to DataFrame
+demographic_df = pd.DataFrame(data)
+
+# Display the DataFrame as a table in Streamlit
+st.subheader("Demographic Data (2024-2029)")
+st.dataframe(demographic_df)
+
+# Create an interactive line plot for Population Growth
+st.subheader("Projected Population Growth (2024-2029)")
+fig1 = px.line(
+    demographic_df,
+    x="Radius",
+    y=["2024 Population", "2029 Projected Population"],
+    labels={"value": "Population", "variable": "Year"},
+    title="Projected Population Growth in Different Radii"
+)
+fig1.update_layout(legend_title_text="Population")
+st.plotly_chart(fig1)
+
+# Create an interactive bar plot for Household Growth
+st.subheader("Household Growth (2024-2029)")
+fig2 = px.bar(
+    demographic_df,
+    x="Radius",
+    y=["Households 2024", "Households 2029"],
+    barmode="group",
+    labels={"value": "Households", "variable": "Year"},
+    title="Household Growth in Different Radii"
+)
+fig2.update_layout(legend_title_text="Households")
+st.plotly_chart(fig2)
+
+# Create an interactive bar plot for Median and Average Household Income
+st.subheader("Household Income Levels (2024)")
+fig3 = px.bar(
+    demographic_df,
+    x="Radius",
+    y=["Median Household Income ($)", "Average Household Income ($)"],
+    barmode="group",
+    labels={"value": "Income ($)", "variable": "Income Type"},
+    title="Household Income Levels in Different Radii"
+)
+fig3.update_layout(legend_title_text="Income Type")
+st.plotly_chart(fig3)
