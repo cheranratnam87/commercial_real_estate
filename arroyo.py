@@ -17,12 +17,44 @@ st.markdown("""
     </style>
     """, unsafe_allow_html=True)
 
-# URL to your KML file
-kml_url = "https://raw.githubusercontent.com/cheranratnam87/commercial_real_estate/refs/heads/main/4901%20Arroyo%20Trail%20Comps.kml"
-
 # Streamlit title and description
 st.title("Business and Healthcare Visualization Around 4901 Arroyo Trail, McKinney, Texas")
-st.write("This map visualizes businesses, healthcare facilities, and other locations around 4901 Arroyo Trail using categorized icons.")
+st.write("This dashboard visualizes businesses, healthcare facilities, and other locations around 4901 Arroyo Trail using categorized icons, along with NAICS categorization and demographic insights.")
+
+### NAICS Categorization Section (First Visual) ###
+@st.cache
+def load_data(url):
+    return pd.read_csv(url)
+
+naics_url = "https://raw.githubusercontent.com/cheranratnam87/commercial_real_estate/refs/heads/main/filtered_data.csv"
+naics_data = load_data(naics_url)
+
+# Show all categories including 'Other'
+category_count = naics_data['NAICS2017_LABEL'].value_counts().reset_index()
+category_count.columns = ['Category', 'Count']
+
+# Button to show "Other" listings
+show_other_listings = st.button("Show listings under 'Other'")
+
+if show_other_listings:
+    st.subheader("Businesses Listed Under 'Other'")
+    other_listings = naics_data[naics_data['NAICS2017_LABEL'] == 'Other']
+    st.dataframe(other_listings)
+
+# Create a bar chart of categories including "Other"
+st.subheader("NAICS Categorization of Businesses (Including 'Other')")
+fig4 = px.bar(
+    category_count,
+    x='Category',
+    y='Count',
+    labels={'Count': 'Number of Businesses', 'Category': 'Business Category'},
+    title="Distribution of Businesses by Category (Including 'Other')"
+)
+st.plotly_chart(fig4)
+
+### Map Visualization Section (Second Visual) ###
+# URL to your KML file
+kml_url = "https://raw.githubusercontent.com/cheranratnam87/commercial_real_estate/refs/heads/main/4901%20Arroyo%20Trail%20Comps.kml"
 
 # Fetch the KML file content from the URL
 response = requests.get(kml_url)
@@ -122,41 +154,7 @@ for placemark in placemarks:
 # Display the map in the Streamlit app using st_folium
 st_folium(map_visualization, width=700, height=500)
 
-# Adding some space reduction between visuals
-st.markdown("<style>div.block-container{padding-top:1rem;padding-bottom:1rem;}</style>", unsafe_allow_html=True)
-
-### NAICS Categorization Section ###
-@st.cache
-def load_data(url):
-    return pd.read_csv(url)
-
-naics_url = "https://raw.githubusercontent.com/cheranratnam87/commercial_real_estate/refs/heads/main/filtered_data.csv"
-naics_data = load_data(naics_url)
-
-# Show all categories including 'Other'
-category_count = naics_data['NAICS2017_LABEL'].value_counts().reset_index()
-category_count.columns = ['Category', 'Count']
-
-# Button to show "Other" listings
-show_other_listings = st.button("Show listings under 'Other'")
-
-if show_other_listings:
-    st.subheader("Businesses Listed Under 'Other'")
-    other_listings = naics_data[naics_data['NAICS2017_LABEL'] == 'Other']
-    st.dataframe(other_listings)
-
-# Create a bar chart of categories including "Other"
-st.subheader("NAICS Categorization of Businesses (Including 'Other')")
-fig4 = px.bar(
-    category_count,
-    x='Category',
-    y='Count',
-    labels={'Count': 'Number of Businesses', 'Category': 'Business Category'},
-    title="Distribution of Businesses by Category (Including 'Other')"
-)
-st.plotly_chart(fig4)
-
-### Demographic Data Section ###
+### Demographic Data Section (Third Visual) ###
 # Creating the demographic DataFrame
 data = {
     "Radius": ["1 Mile", "3 Mile", "5 Mile"],
