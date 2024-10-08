@@ -1,9 +1,8 @@
+streamlit
 folium
 fastkml
 shapely
 streamlit-folium
-requests
-setuptools
 pandas
 plotly
-
+requests
