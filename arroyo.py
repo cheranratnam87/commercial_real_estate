@@ -133,8 +133,12 @@ def load_data(url):
 naics_url = "https://raw.githubusercontent.com/cheranratnam87/commercial_real_estate/refs/heads/main/filtered_data.csv"
 naics_data = load_data(naics_url)
 
-# Filter out 'Total for all sectors'
-naics_data = naics_data[naics_data['NAICS2017_LABEL'] != 'Total for all sectors']
+# Toggle button to include/exclude "Other" category
+show_other = st.checkbox("Include 'Other' category in NAICS visualization", value=False)
+
+# Filter out or include 'Other' based on checkbox
+if not show_other:
+    naics_data = naics_data[naics_data['NAICS2017_LABEL'] != 'Other']
 
 # Adding a selectbox to filter by category
 category_options = naics_data['NAICS2017_LABEL'].unique().tolist()
