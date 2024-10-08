@@ -133,19 +133,29 @@ def load_data(url):
 naics_url = "https://raw.githubusercontent.com/cheranratnam87/commercial_real_estate/refs/heads/main/filtered_data.csv"
 naics_data = load_data(naics_url)
 
+# Filter out 'Total for all sectors'
+naics_data = naics_data[naics_data['NAICS2017_LABEL'] != 'Total for all sectors']
+
+# Adding a selectbox to filter by category
+category_options = naics_data['NAICS2017_LABEL'].unique().tolist()
+selected_category = st.selectbox("Select a NAICS Category to filter", category_options)
+
+# Filter the NAICS data by the selected category
+filtered_naics_data = naics_data[naics_data['NAICS2017_LABEL'] == selected_category]
+
 # Categorize NAICS labels
 def categorize_naics(label):
     label = label.lower()
 
     healthcare_keywords = ['health', 'dental', 'dentists', 'medical', 'hospital', 'clinic', 'nursing', 'chiropractors', 'optometrists', 'physicians', 'therapists', 'diagnostic']
     financial_keywords = ['finance', 'lending', 'credit', 'bank', 'insurance', 'investment', 'securities', 'brokerage', 'accountants','mortgage', 'tax','portfolio', 'intermediation']
-    # ... (add other keywords as defined previously)
+    # Add other keywords as defined previously...
     
     if any(keyword in label for keyword in healthcare_keywords):
         return 'Healthcare'
     elif any(keyword in label for keyword in financial_keywords):
         return 'Financial Services'
-    # ... (add other categorization conditions)
+    # Add other categorization conditions...
     else:
         return 'Other'
 
