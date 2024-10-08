@@ -143,7 +143,7 @@ category_count = naics_data['NAICS2017_LABEL'].value_counts().reset_index()
 category_count.columns = ['Category', 'Count']
 
 # Create a horizontal bar chart of all categories including 'Other'
-st.subheader("NAICS Categorization of Businesses (Including All Categories)")
+st.subheader("75070 zip Categorization of Businesses (Including All Categories)")
 fig4 = px.bar(
     category_count,
     x='Count',
