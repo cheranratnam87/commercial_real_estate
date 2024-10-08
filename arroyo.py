@@ -1,13 +1,4 @@
-import folium
-from fastkml import kml
-from shapely.geometry import shape
-import streamlit as st
-from streamlit_folium import st_folium
-import requests
-import pandas as pd
-import plotly.express as px
-
-# Custom CSS to reduce padding and space between visuals
+# Custom CSS to reduce padding and space between visuals (improved)
 st.markdown("""
     <style>
     div.block-container {
@@ -22,6 +13,7 @@ st.markdown("""
     }
     </style>
     """, unsafe_allow_html=True)
+
 # Define the categorize_naics function here
 def categorize_naics(label):
     # Convert label to lowercase for easier matching
@@ -84,11 +76,34 @@ def categorize_naics(label):
         return 'Social Assistance and Organizations'
     elif any(keyword in label for keyword in professional_services_keywords):
         return 'Professional, Scientific, and Technical Services'
-    # 'Total for all sectors' should be categorized separately if needed
     elif 'total for all sectors' in label:
         return 'All Sectors'
     else:
         return 'Other'
+
+# NAICS Categorization Section with Broader Categories (New Visual)
+st.subheader("Categorization of Businesses by Broader Sectors")
+
+# Apply categorization to the 'NAICS2017_LABEL' column
+naics_data['Category_Broad'] = naics_data['NAICS2017_LABEL'].apply(categorize_naics)
+
+# Show count of businesses in each broad category
+broad_category_count = naics_data['Category_Broad'].value_counts().reset_index()
+broad_category_count.columns = ['Broad Category', 'Count']
+
+# Create a bar chart with category on X and count on Y
+fig5 = px.bar(
+    broad_category_count,
+    x='Broad Category',
+    y='Count',  # Show count on y-axis
+    labels={'Count': 'Number of Businesses', 'Broad Category': 'Business Category'},
+    title="Distribution of Businesses by Broad Category",
+    orientation='v'  # Set orientation to vertical
+)
+
+# Display the plot
+st.plotly_chart(fig5)
+
 
 # Streamlit title and description
 st.title("Business and Healthcare Visualization Around 4901 Arroyo Trail, McKinney, Texas")
